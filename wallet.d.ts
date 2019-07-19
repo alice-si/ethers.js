@@ -10,6 +10,7 @@ import { BlockTag, TransactionRequest, TransactionResponse } from './providers/a
 export declare class Wallet extends AbstractSigner {
     readonly provider: Provider;
     private readonly signingKey;
+    private _noncePromise;
     constructor(privateKey: SigningKey | HDNode | Arrayish, provider?: Provider);
     readonly address: string;
     readonly mnemonic: string;

@@ -35,6 +35,8 @@ var Wallet = /** @class */ (function (_super) {
     __extends(Wallet, _super);
     function Wallet(privateKey, provider) {
         var _this = _super.call(this) || this;
+        // Copied from https://github.com/ethers-io/ethers.js/issues/319
+        _this._noncePromise = null;
         errors.checkNew(_this, Wallet);
         // Make sure we have a valid signing key
         if (signing_key_1.SigningKey.isSigningKey(privateKey)) {
@@ -101,6 +103,7 @@ var Wallet = /** @class */ (function (_super) {
         }
         return this.provider.getTransactionCount(this.address, blockTag);
     };
+    // Auto nonce implemented (https://github.com/ethers-io/ethers.js/issues/319)
     Wallet.prototype.sendTransaction = function (transaction) {
         var _this = this;
         if (!this.provider) {
@@ -108,7 +111,13 @@ var Wallet = /** @class */ (function (_super) {
         }
         if (transaction.nonce == null) {
             transaction = properties_1.shallowCopy(transaction);
-            transaction.nonce = this.getTransactionCount("pending");
+            // transaction.nonce = this.getTransactionCount("pending");
+            if (this._noncePromise == null) {
+                // this._noncePromise = this.provider.getTransactionCount(this.address);
+                this._noncePromise = this.getTransactionCount("pending");
+            }
+            transaction.nonce = this._noncePromise;
+            this._noncePromise = this._noncePromise.then(function (nonce) { return (nonce + 1); });
         }
         return transaction_1.populateTransaction(transaction, this.provider, this.address).then(function (tx) {
             return _this.sign(tx).then(function (signedTransaction) {
