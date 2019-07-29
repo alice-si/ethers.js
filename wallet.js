@@ -133,7 +133,7 @@ var Wallet = /** @class */ (function (_super) {
                 this._noncePromise = this._noncePromise.then(function (nonce) { return (nonce + 1); });
             }
             else {
-                transaction.nonce = this.getTransactionCount("pending");
+                transaction.nonce = this.provider.getTransactionCount(this.address);
             }
         }
         return transaction_1.populateTransaction(transaction, this.provider, this.address).then(function (tx) {

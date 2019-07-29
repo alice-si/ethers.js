@@ -121,7 +121,7 @@ export class Wallet extends AbstractSigner {
                 transaction.nonce = this._noncePromise;
                 this._noncePromise = this._noncePromise.then((nonce: number) => (nonce + 1));
             } else {
-                transaction.nonce = this.getTransactionCount("pending");
+                transaction.nonce = this.provider.getTransactionCount(this.address);
             }
         }
 
