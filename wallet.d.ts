@@ -12,7 +12,7 @@ export declare class Wallet extends AbstractSigner {
     private readonly signingKey;
     private _noncePromise;
     private _autoNonce;
-    constructor(privateKey: SigningKey | HDNode | Arrayish, provider?: Provider);
+    constructor(privateKey: SigningKey | HDNode | Arrayish, provider?: Provider, autoNonce?: Boolean);
     readonly address: string;
     readonly mnemonic: string;
     readonly path: string;
@@ -21,7 +21,6 @@ export declare class Wallet extends AbstractSigner {
      *  Create a new instance of this Wallet connected to provider.
      */
     connect(provider: Provider): Wallet;
-    setAutoNonce(val: Boolean): void;
     getAddress(): Promise<string>;
     sign(transaction: TransactionRequest): Promise<string>;
     signMessage(message: Arrayish | string): Promise<string>;

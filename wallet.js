@@ -33,7 +33,8 @@ var abstract_provider_1 = require("./providers/abstract-provider");
 var errors = __importStar(require("./errors"));
 var Wallet = /** @class */ (function (_super) {
     __extends(Wallet, _super);
-    function Wallet(privateKey, provider) {
+    // Changed by alex@alice.si
+    function Wallet(privateKey, provider, autoNonce) {
         var _this = _super.call(this) || this;
         // Added by alex@alice.si
         // Copied from https://github.com/ethers-io/ethers.js/issues/319
@@ -48,6 +49,10 @@ var Wallet = /** @class */ (function (_super) {
             properties_1.defineReadOnly(_this, 'signingKey', new signing_key_1.SigningKey(privateKey));
         }
         properties_1.defineReadOnly(_this, 'provider', provider);
+        // Added by alex@alice.si
+        if (autoNonce) {
+            _this._autoNonce = autoNonce;
+        }
         return _this;
     }
     Object.defineProperty(Wallet.prototype, "address", {
@@ -78,10 +83,6 @@ var Wallet = /** @class */ (function (_super) {
             errors.throwError('invalid provider', errors.INVALID_ARGUMENT, { argument: 'provider', value: provider });
         }
         return new Wallet(this.signingKey, provider);
-    };
-    // Added by alex@alice.si
-    Wallet.prototype.setAutoNonce = function (val) {
-        this._autoNonce = val;
     };
     Wallet.prototype.getAddress = function () {
         return Promise.resolve(this.address);

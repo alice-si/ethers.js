@@ -35,7 +35,8 @@ export class Wallet extends AbstractSigner {
     private _noncePromise: Promise<any> = null;
     private _autoNonce: Boolean = false;
 
-    constructor(privateKey: SigningKey | HDNode | Arrayish, provider?: Provider) {
+    // Changed by alex@alice.si
+    constructor(privateKey: SigningKey | HDNode | Arrayish, provider?: Provider, autoNonce?: Boolean) {
         super();
         errors.checkNew(this, Wallet);
 
@@ -47,6 +48,11 @@ export class Wallet extends AbstractSigner {
         }
 
         defineReadOnly(this, 'provider', provider);
+
+        // Added by alex@alice.si
+        if (autoNonce) {
+            this._autoNonce = autoNonce;
+        }
     }
 
     get address(): string { return this.signingKey.address; }
@@ -65,11 +71,6 @@ export class Wallet extends AbstractSigner {
             errors.throwError('invalid provider', errors.INVALID_ARGUMENT, { argument: 'provider', value: provider });
         }
         return new Wallet(this.signingKey, provider);
-    }
-
-    // Added by alex@alice.si
-    setAutoNonce(val: Boolean) {
-        this._autoNonce = val;
     }
 
     getAddress(): Promise<string> {
