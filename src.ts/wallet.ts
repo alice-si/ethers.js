@@ -30,8 +30,10 @@ export class Wallet extends AbstractSigner {
 
     private readonly signingKey: SigningKey;
 
+    // Added by alex@alice.si
     // Copied from https://github.com/ethers-io/ethers.js/issues/319
     private _noncePromise: Promise<any> = null;
+    private _autoNonce: Boolean = false;
 
     constructor(privateKey: SigningKey | HDNode | Arrayish, provider?: Provider) {
         super();
@@ -65,6 +67,11 @@ export class Wallet extends AbstractSigner {
         return new Wallet(this.signingKey, provider);
     }
 
+    // Added by alex@alice.si
+    setAutoNonce(val: Boolean) {
+        this._autoNonce = val;
+    }
+
     getAddress(): Promise<string> {
         return Promise.resolve(this.address);
     }
@@ -92,19 +99,23 @@ export class Wallet extends AbstractSigner {
         return this.provider.getTransactionCount(this.address, blockTag);
     }
 
+    // Changed by alex@alice.si
     // Auto nonce implemented (https://github.com/ethers-io/ethers.js/issues/319)
     sendTransaction(transaction: TransactionRequest): Promise<TransactionResponse> {
         if (!this.provider) { throw new Error('missing provider'); }
 
         if (transaction.nonce == null) {
             transaction = shallowCopy(transaction);
-            // transaction.nonce = this.getTransactionCount("pending");
-            if (this._noncePromise == null) {
-                // this._noncePromise = this.provider.getTransactionCount(this.address);
-                this._noncePromise = this.getTransactionCount("pending");
+            if (this._autoNonce) {
+                if (this._noncePromise == null) {
+                    // this._noncePromise = this.provider.getTransactionCount(this.address);
+                    this._noncePromise = this.getTransactionCount("pending");
+                }
+                transaction.nonce = this._noncePromise;
+                this._noncePromise = this._noncePromise.then((nonce: number) => (nonce + 1));
+            } else {
+                transaction.nonce = this.getTransactionCount("pending");
             }
-            transaction.nonce = this._noncePromise;
-            this._noncePromise = this._noncePromise.then((nonce: number) => (nonce + 1));
         }
 
 
