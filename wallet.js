@@ -33,7 +33,7 @@ var abstract_provider_1 = require("./providers/abstract-provider");
 var errors = __importStar(require("./errors"));
 var Wallet = /** @class */ (function (_super) {
     __extends(Wallet, _super);
-    // Changed by alex@alice.si
+    // Added by alex@alice.si
     function Wallet(privateKey, provider, autoNonce) {
         var _this = _super.call(this) || this;
         // Added by alex@alice.si
@@ -83,6 +83,11 @@ var Wallet = /** @class */ (function (_super) {
             errors.throwError('invalid provider', errors.INVALID_ARGUMENT, { argument: 'provider', value: provider });
         }
         return new Wallet(this.signingKey, provider);
+    };
+    // Implemented by alex@alic.si
+    // Creste a new wallet with autononce set
+    Wallet.prototype.setAutoNonce = function (val) {
+        return new Wallet(this.signingKey, this.provider, val);
     };
     Wallet.prototype.getAddress = function () {
         return Promise.resolve(this.address);

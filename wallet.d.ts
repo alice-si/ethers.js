@@ -21,6 +21,7 @@ export declare class Wallet extends AbstractSigner {
      *  Create a new instance of this Wallet connected to provider.
      */
     connect(provider: Provider): Wallet;
+    setAutoNonce(val: Boolean): Wallet;
     getAddress(): Promise<string>;
     sign(transaction: TransactionRequest): Promise<string>;
     signMessage(message: Arrayish | string): Promise<string>;
